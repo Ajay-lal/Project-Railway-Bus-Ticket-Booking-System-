@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+/* ===============================
+   TICKET CONTAINER
+================================ */
+
+.ticket-wrapper{
+width:850px;
+margin:40px auto;
+background:#ffffff;
+border-radius:8px;
+box-shadow:0 5px 20px rgba(0,0,0,0.15);
+font-family:Arial, Helvetica, sans-serif;
+overflow:hidden;
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.ticket-header{
+background:#0d6efd;
+color:white;
+text-align:center;
+padding:20px;
+}
+
+.ticket-header h2{
+margin:0;
+font-size:24px;
+}
+
+.ticket-header p{
+margin-top:5px;
+font-size:14px;
+opacity:0.9;
+}
+
+/* ===============================
+   BODY
+================================ */
+
+.ticket-body{
+padding:25px;
+}
+
+/* ===============================
+   ROW LAYOUT
+================================ */
+
+.ticket-row{
+display:flex;
+justify-content:space-between;
+gap:20px;
+margin-bottom:15px;
+flex-wrap:wrap;
+}
+
+.ticket-col{
+flex:1;
+min-width:200px;
+}
+
+.ticket-col label{
+font-weight:bold;
+color:#555;
+font-size:13px;
+display:block;
+margin-bottom:4px;
+}
+
+.ticket-col p{
+margin:0;
+font-size:15px;
+}
+
+/* ===============================
+   PNR
+================================ */
+
+.pnr{
+font-size:20px;
+font-weight:bold;
+color:#0d6efd;
+}
+
+.status-confirmed{
+color:green;
+font-weight:bold;
+}
+
+/* ===============================
+   PASSENGER TABLE
+================================ */
+
+.passenger-table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px;
+}
+
+.passenger-table thead{
+background:#0d6efd;
+color:white;
+}
+
+.passenger-table th{
+padding:10px;
+text-align:center;
+font-size:14px;
+}
+
+.passenger-table td{
+border:1px solid #ddd;
+padding:8px;
+text-align:center;
+font-size:14px;
+}
+
+.passenger-table tr:nth-child(even){
+background:#f7f7f7;
+}
+
+.passenger-table tr:hover{
+background:#eef4ff;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+
+.ticket-footer{
+border-top:1px solid #ddd;
+padding:20px;
+text-align:center;
+}
+
+.ticket-footer img{
+margin:10px 0;
+}
+
+/* ===============================
+   PRINT BUTTON
+================================ */
+
+.print-btn{
+background:#28a745;
+border:none;
+padding:10px 20px;
+color:white;
+font-size:14px;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.print-btn:hover{
+background:#1f8a39;
+}
+
+/* ===============================
+   PRINT STYLE
+================================ */
+
+@media print{
+
+@page{
+size:A4;
+margin:10mm;
+}
+
+body *{
+visibility:hidden;
+}
+
+.ticket-wrapper,
+.ticket-wrapper *{
+visibility:visible;
+}
+
+.ticket-wrapper{
+position:absolute;
+left:50%;
+top:0;
+transform:translateX(-50%);
+width:800px;
+box-shadow:none;
+border:1px solid #ccc;
+}
+
+nav,
+.navbar,
+header,
+footer,
+.print-btn{
+display:none !important;
+}
+
+}
+
+</style>
+
+
+<div class="ticket-wrapper">
+
+<div class="ticket-header">
+<h2>Railway / Bus Ticket Booking System</h2>
+<p>E-Ticket / Electronic Reservation Slip</p>
+</div>
+
+
+<div class="ticket-body">
+
+
+<!-- =============================== -->
+<!-- PNR -->
+<!-- =============================== -->
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>PNR Number</label>
+<p class="pnr">{{ booking.pnr }}</p>
+</div>
+
+<div class="ticket-col">
+<label>Status</label>
+<p class="status-confirmed">{{ booking.status }}</p>
+</div>
+
+</div>
+
+<hr>
+
+
+<!-- =============================== -->
+<!-- PASSENGER TABLE -->
+<!-- =============================== -->
+
+<h3>Passenger Details</h3>
+
+<table class="passenger-table">
+
+<thead>
+<tr>
+<th>#</th>
+<th>Name</th>
+<th>Seat</th>
+<th>Phone</th>
+<th>Aadhaar</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for passenger in passengers %}
+
+<tr>
+<td>{{ forloop.counter }}</td>
+<td>{{ passenger.name }}</td>
+<td>{{ passenger.seat_number }}</td>
+<td>{{ passenger.phone }}</td>
+<td>{{ passenger.aadhaar }}</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+
+<hr>
+
+
+<!-- =============================== -->
+<!-- PAYMENT DETAILS -->
+<!-- =============================== -->
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>Payment ID</label>
+<p>{{ payment.payment_id }}</p>
+</div>
+
+<div class="ticket-col">
+<label>Payment Method</label>
+<p>{{ payment.payment_method }}</p>
+</div>
+
+</div>
+
+<hr>
+
+
+<!-- =============================== -->
+<!-- COACH & VEHICLE -->
+<!-- =============================== -->
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>Coach</label>
+<p>{{ booking.coach.coach_name }}</p>
+</div>
+
+<div class="ticket-col">
+<label>Coach Class</label>
+<p>{{ booking.coach.coach_type }}</p>
+</div>
+
+</div>
+
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>Vehicle</label>
+<p>{{ booking.schedule.vehicle.vehicle_name }}</p>
+</div>
+
+<div class="ticket-col">
+<label>Vehicle Number</label>
+<p>{{ booking.schedule.vehicle.vehicle_number }}</p>
+</div>
+
+</div>
+
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>Route</label>
+<p>{{ booking.schedule.route }}</p>
+</div>
+
+</div>
+
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>Journey Date</label>
+<p>{{ booking.schedule.journey_date|date:"d M Y" }}</p>
+</div>
+
+<div class="ticket-col">
+<label>Departure Time</label>
+<p>{{ booking.schedule.departure_time|time:"H:i" }}</p>
+</div>
+
+</div>
+
+
+<hr>
+
+
+<!-- =============================== -->
+<!-- BOOKING INFO -->
+<!-- =============================== -->
+
+<div class="ticket-row">
+
+<div class="ticket-col">
+<label>Ticket ID</label>
+<p>#TKT{{ booking.id }}</p>
+</div>
+
+<div class="ticket-col">
+<label>Booking Date</label>
+<p>{{ booking.booking_date }}</p>
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- =============================== -->
+<!-- QR + PRINT -->
+<!-- =============================== -->
+
+<div class="ticket-footer">
+
+<h4>Scan Ticket</h4>
+
+<img src="data:image/png;base64,{{ qr_image }}" width="120">
+
+<p>This QR contains ticket verification data.</p>
+
+<button onclick="window.print()" class="print-btn">
+Print Ticket
+</button>
+
+</div>
+
+
+</div>
+
+{% endblock %}

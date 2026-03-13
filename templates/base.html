@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Railway/Bus Ticket Booking System</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Static CSS -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body class="base-background {% block body_class %}{% endblock %}">
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+<div class="container-fluid">
+
+<a class="navbar-brand" href="/">Railway/Bus Ticket Booking</a>
+
+<div>
+
+<a href="/" class="btn btn-primary">Home</a>
+
+{% if user.is_authenticated %}
+
+<span class="text-white me-3">Welcome {{ user.username }}</span>
+
+<a href="/bookings/" class="btn btn-success">Booking History</a>
+
+<button onclick="toggleNotifications()" class="btn btn-warning">🔔 Notifications</button>
+
+<a href="/dashboard/" class="btn btn-dashboard">Dashboard</a>
+
+<a href="/logout/" class="btn btn-danger">Logout</a>
+
+{% else %}
+
+<a href="/login/" class="btn btn-secondary">Login</a>
+
+<a href="/register/" class="btn btn-info">Register</a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</nav>
+
+<div id="notificationPanel" class="notification-panel">
+
+<h5>Notifications</h5>
+
+{% if notifications %}
+
+{% for n in notifications %}
+<p>{{ n.message }}</p>
+<hr>
+{% endfor %}
+
+{% else %}
+
+<p>No notifications</p>
+
+{% endif %}
+
+</div>
+
+
+<!-- MAIN CONTENT AREA -->
+
+<div class="container mt-4">
+
+{% block content %}
+
+{% endblock %}
+
+</div>
+
+
+<!-- Notification Script -->
+
+<script>
+
+function toggleNotifications() {
+
+var panel = document.getElementById("notificationPanel");
+
+if (panel.style.display === "none") {
+panel.style.display = "block";
+}
+else {
+panel.style.display = "none";
+}
+
+}
+
+</script>
+
+
+</body>
+</html>

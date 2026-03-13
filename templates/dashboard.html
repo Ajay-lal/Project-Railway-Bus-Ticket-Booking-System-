@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+<h2 class="text-center">User Dashboard</h2>
+
+<hr>
+
+<!-- USER DETAILS -->
+
+<div class="profile-section">
+
+<h3>Profile Information</h3>
+
+<p><strong>Name:</strong> {{ user.username }}</p>
+<p><strong>Email:</strong> {{ profile.email }}</p>
+<p><strong>Phone:</strong> {{ profile.phone }}</p>
+<p><strong>Gender:</strong> {{ profile.gender }}</p>
+<p><strong>Date of Birth:</strong> {{ profile.date_of_birth }}</p>
+
+</div>
+
+<hr>
+
+<!-- BOOKING STATS -->
+
+<div class="dashboard-cards">
+
+<div class="dashboard-card total">
+<h4>Total Bookings</h4>
+<p>{{ total_bookings }}</p>
+</div>
+
+<div class="dashboard-card confirmed">
+<h4>Confirmed Tickets</h4>
+<p>{{ confirmed }}</p>
+</div>
+
+<div class="dashboard-card cancelled">
+<h4>Cancelled Tickets</h4>
+<p>{{ cancelled }}</p>
+</div>
+
+</div>
+
+<hr>
+
+<!-- RECENT BOOKINGS -->
+
+<h3>Recent Bookings</h3>
+
+<table class="table table-bordered table-striped">
+
+<tr>
+<th>Vehicle</th>
+<th>Route</th>
+<th>Seat</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+
+{% for booking in recent_bookings %}
+
+<tr>
+<td>{{ booking.schedule.vehicle }}</td>
+<td>{{ booking.schedule.route }}</td>
+<td>{{ booking.seat_number }}</td>
+<td>{{ booking.booking_date }}</td>
+<td>{{ booking.status }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<hr>
+
+<!-- QUICK ACTION BUTTONS -->
+
+<div class="dashboard-buttons text-center">
+
+<a href="/" class="btn btn-primary">Search Vehicles</a>
+
+<a href="/bookings/" class="btn btn-success">Booking History</a>
+
+</div>
+
+</div>
+
+{% endblock %}

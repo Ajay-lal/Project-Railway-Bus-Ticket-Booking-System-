@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="search-box">
+
+<h2>Search Bus / Train</h2>
+
+<form method="GET" action="{% url 'home' %}" class="search-form">
+
+<div class="form-group">
+<label>Source</label>
+<input type="text" name="source" class="form-control" placeholder="Enter source city">
+</div>
+
+<div class="form-group">
+<label>Destination</label>
+<input type="text" name="destination" class="form-control" placeholder="Enter destination city">
+</div>
+
+<button type="submit" class="btn btn-primary mt-2">Search</button>
+
+</form>
+
+</div>
+
+<br>
+
+{% if schedules %}
+
+<div class="table-container">
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+<tr>
+<th>Type</th>
+<th>Vehicle</th>
+<th>Route</th>
+<th>Departure</th>
+<th>Arrival</th>
+<th>Class / Coach</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for schedule in schedules %}
+
+<tr>
+
+<td>{{ schedule.vehicle.vehicle_type }}</td>
+<td>{{ schedule.vehicle.vehicle_name }}</td>
+<td>{{ schedule.route }}</td>
+<td>{{ schedule.departure_time }}</td>
+<td>{{ schedule.arrival_time }}</td>
+
+<td>
+
+{% if schedule.coach_set.all %}
+
+{% for coach in schedule.coach_set.all %}
+
+<a href="{% url 'book_ticket' schedule.id %}?coach={{ coach.id }}"
+class="btn btn-success btn-sm mb-1">
+
+{{ coach.coach_type }}
+
+</a>
+
+{% endfor %}
+
+{% else %}
+
+<span class="text-danger">No Coach Available</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% elif request.GET.source %}
+
+<div class="alert alert-danger text-center">
+No vehicles found for this route.
+</div>
+
+{% endif %}
+
+{% endblock %}

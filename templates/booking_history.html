@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="history-container">
+
+<h2 class="text-center">Booking History</h2>
+
+{% if bookings %}
+
+<table class="table table-bordered table-striped">
+
+<thead class="table-dark">
+
+<tr>
+<th>PNR</th>
+<th>Passengers</th>
+<th>Seats</th>
+<th>Vehicle</th>
+<th>Route</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for booking in bookings %}
+
+<tr>
+
+<td>{{ booking.pnr }}</td>
+
+<!-- Passenger Names -->
+<td>
+{% for passenger in booking.passengers.all %}
+{{ passenger.name }} ({{ passenger.seat_number }}){% if not forloop.last %}, {% endif %}
+{% endfor %}
+</td>
+
+<!-- Seat Numbers -->
+<td>
+{% for passenger in booking.passengers.all %}
+{{ passenger.seat_number }}<br>
+{% endfor %}
+</td>
+
+<td>{{ booking.schedule.vehicle.vehicle_name }}</td>
+
+<td>{{ booking.schedule.route }}</td>
+
+<td>{{ booking.booking_date }}</td>
+
+<td>
+
+{% if booking.status == "Confirmed" %}
+
+<span class="badge bg-success">Confirmed</span>
+
+{% else %}
+
+<span class="badge bg-danger">Cancelled</span>
+
+{% endif %}
+
+</td>
+
+<td>
+
+{% if booking.status == "Confirmed" %}
+
+<a href="/payment-success/{{ booking.id }}/" class="btn btn-success btn-sm">
+View Ticket
+</a>
+
+<a href="/cancel/{{ booking.id }}/"
+class="btn btn-danger btn-sm"
+onclick="return confirm('Are you sure you want to cancel this ticket?')">
+
+Cancel
+
+</a>
+
+{% else %}
+
+<span class="text-muted">Cancelled</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% else %}
+
+<div class="alert alert-info text-center">
+No bookings found.
+</div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

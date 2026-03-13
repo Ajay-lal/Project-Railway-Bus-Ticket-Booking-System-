@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/book_ticket.css' %}">
+
+<div class="booking-container">
+
+<h2 class="title">Book Ticket</h2>
+
+<div class="vehicle-info">
+
+<p><strong>Vehicle:</strong> {{ schedule.vehicle.vehicle_name }}</p>
+<p><strong>Vehicle Number:</strong> {{ schedule.vehicle.vehicle_number }}</p>
+<p><strong>Route:</strong> {{ schedule.route }}</p>
+<p><strong>Journey Date:</strong> {{ schedule.journey_date }}</p>
+<p><strong>Departure:</strong> {{ schedule.departure_time }}</p>
+
+<p><strong>Coach:</strong> {{ coach.coach_name }}</p>
+<p><strong>Class:</strong> {{ coach.coach_type }}</p>
+
+</div>
+
+{% if error %}
+<div class="alert">
+{{ error }}
+</div>
+{% endif %}
+
+<form method="POST" id="bookingForm">
+
+{% csrf_token %}
+
+<h3 class="section-title">Passengers</h3>
+
+<div class="form-group">
+
+<label>Number of Passengers</label>
+
+<select id="passengerCount" name="passenger_count" onchange="generatePassengerForms()">
+
+<option value="1">1 Passenger</option>
+<option value="2">2 Passengers</option>
+<option value="3">3 Passengers</option>
+<option value="4">4 Passengers</option>
+<option value="5">5 Passengers</option>
+
+</select>
+
+</div>
+
+<div id="passengerForms"></div>
+
+<input type="hidden" name="seat_number" id="seat_number">
+
+<h3 class="section-title">Select Seats (Max 5)</h3>
+
+<div class="seat-window">
+<div class="seat-container">
+
+{% for seat in seat_list %}
+
+{% if seat in booked_seats %}
+
+<button type="button" class="seat booked" disabled>
+{{ seat }}
+</button>
+
+{% else %}
+
+<button type="button" class="seat available"
+onclick="selectSeat('{{ seat }}', this)">
+{{ seat }}
+</button>
+
+{% endif %}
+
+{% empty %}
+
+<p style="color:red;">No seats available for this coach.</p>
+
+{% endfor %}
+
+</div>
+</div>
+
+<div class="legend">
+
+<div class="legend-item">
+<div class="seat available"></div>
+<span>Available</span>
+</div>
+
+<div class="legend-item">
+<div class="seat booked"></div>
+<span>Booked</span>
+</div>
+
+<div class="legend-item">
+<div class="seat selected"></div>
+<span>Selected</span>
+</div>
+
+</div>
+
+<div class="submit-area">
+
+<button type="submit" class="book-btn">
+Book Ticket
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<script>
+
+let selectedSeats = []
+
+function selectSeat(seat, element){
+
+if(selectedSeats.includes(seat)){
+
+selectedSeats = selectedSeats.filter(s => s !== seat)
+element.classList.remove("selected")
+
+}
+else{
+
+if(selectedSeats.length >= 5){
+alert("Maximum 5 seats allowed per booking")
+return
+}
+
+selectedSeats.push(seat)
+element.classList.add("selected")
+
+}
+
+document.getElementById("seat_number").value = selectedSeats.join(",")
+
+}
+
+
+
+function generatePassengerForms(){
+
+let count = document.getElementById("passengerCount").value
+let container = document.getElementById("passengerForms")
+
+container.innerHTML = ""
+
+for(let i=1;i<=count;i++){
+
+container.innerHTML += `
+
+<div class="passenger-card">
+
+<h4>Passenger ${i}</h4>
+
+<label>Name</label>
+<input type="text" name="passenger_name[]" required minlength="2">
+
+<label>Phone</label>
+<input type="text" name="phone[]" required maxlength="10">
+
+<label>Date of Birth</label>
+<input type="date" name="dob[]" required>
+
+<label>Aadhaar</label>
+<input type="text" name="aadhaar[]" required maxlength="12">
+
+</div>
+
+`
+
+}
+
+}
+
+generatePassengerForms()
+
+
+
+document.getElementById("bookingForm").addEventListener("submit", function(e){
+
+let phones = document.querySelectorAll("input[name='phone[]']")
+let aadhaars = document.querySelectorAll("input[name='aadhaar[]']")
+let names = document.querySelectorAll("input[name='passenger_name[]']")
+
+let passengerCount = phones.length
+
+
+if(selectedSeats.length != passengerCount){
+
+alert("Passenger count must match seat count")
+e.preventDefault()
+return
+
+}
+
+
+for(let phone of phones){
+
+if(!/^[0-9]{10}$/.test(phone.value)){
+
+alert("Phone number must be 10 digits")
+e.preventDefault()
+return
+
+}
+
+}
+
+
+for(let ad of aadhaars){
+
+if(!/^[0-9]{12}$/.test(ad.value)){
+
+alert("Aadhaar number must be 12 digits")
+e.preventDefault()
+return
+
+}
+
+}
+
+
+for(let name of names){
+
+if(name.value.trim().length < 2){
+
+alert("Passenger name is too short")
+e.preventDefault()
+return
+
+}
+
+}
+
+})
+
+</script>
+
+{% endblock %}

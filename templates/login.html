@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block body_class %}login-bg{% endblock %}
+
+{% block content %}
+
+<div class="form-container">
+
+<!-- Messages -->
+
+{% if messages %}
+
+{% for message in messages %}
+
+<div class="alert alert-success">
+{{ message }}
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+<h2>Login</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+
+<label>Username</label>
+<input type="text" name="username" class="form-control">
+
+<label>Password</label>
+<input type="password" name="password" class="form-control">
+
+<br>
+
+<button type="submit" class="btn btn-primary w-100">Login</button>
+
+</form>
+
+<br>
+
+<div style="text-align:center">
+
+<p>Forgot password?</p>
+<a href="/reset-password/" class="btn btn-warning">Reset Password</a>
+
+</div>
+
+<hr>
+
+<div style="text-align:center">
+
+<p>Don't have an account?</p>
+<a href="/register/" class="btn btn-info">Register</a>
+
+</div>
+
+<hr>
+
+<div style="text-align:center">
+
+<h5>Admin Access</h5>
+<a href="/admin/" class="btn btn-danger">Admin Login</a>
+
+</div>
+
+</div>
+
+{% endblock %}
